@@ -8,6 +8,15 @@ import (
 
 func Routes(r *gin.Engine) {
 	r.GET("/health", checkAPI)
+
+	r.GET("/bookmark")
+	r.GET("/bookmark/:id")
+
+	r.POST("/bookmark")
+
+	r.PUT("/bookmark/:id")
+
+	r.DELETE("/bookmark/:id")
 }
 
 func checkAPI(c *gin.Context) {
