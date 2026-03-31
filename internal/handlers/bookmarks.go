@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"net/http"
+	"slices"
 	"strconv"
 
 	"github.com/diaszakir/bookmark/internal/models"
@@ -12,7 +13,29 @@ var bookmarks []models.Bookmark
 var id int64
 
 func GetBookmarks(c *gin.Context) {
+	name := c.Query("name")
+	tags := c.QueryArray("tag")
 
+	if name == "" && len(tags) == 0 {
+		c.JSON(http.StatusOK, bookmarks)
+		return
+	}
+
+	var result []models.Bookmark
+
+	for _, b := range bookmarks {
+		if name != "" && b.Name == name {
+			result = append(result, b)
+			continue
+		}
+
+		if slices.Contains(tags, b.Tag) {
+			result = append(result, b)
+			break
+		}
+	}
+
+	c.JSON(http.StatusOK, result)
 }
 
 func GetBookmark(c *gin.Context) {
@@ -46,7 +69,7 @@ func CreateBookmark(c *gin.Context) {
 	bookmark.Id = id
 
 	bookmarks = append(bookmarks, bookmark)
-	c.JSON(http.StatusCreated, gin.H{"message": "bookmark created!", "bookmark": bookmark})
+	c.Status(http.StatusCreated)
 }
 
 func EditBookmark(c *gin.Context) {
