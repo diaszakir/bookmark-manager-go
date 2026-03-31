@@ -13,6 +13,14 @@ import (
 var bookmarks []models.Bookmark
 var id int64 = 0
 
+// GetBookmarks godoc
+// @Summary     List bookmarks
+// @Tags        bookmarks
+// @Produce     json
+// @Param       name  query     string  false  "Filter by name"
+// @Param       tag   query     []string false  "Filter by tag"
+// @Success     200   {array}   models.Bookmark
+// @Router      /bookmark [get]
 func GetBookmarks(c *gin.Context) {
 	name := c.Query("name")
 	tags := c.QueryArray("tag")
@@ -39,6 +47,15 @@ func GetBookmarks(c *gin.Context) {
 	c.JSON(http.StatusOK, result)
 }
 
+// GetBookmark godoc
+// @Summary     Get a bookmark
+// @Tags        bookmarks
+// @Produce     json
+// @Param       id   path      int  true  "Bookmark ID"
+// @Success     200  {object}  models.Bookmark
+// @Failure     400  {object}  map[string]string
+// @Failure     404  {object}  map[string]string
+// @Router      /bookmark/{id} [get]
 func GetBookmark(c *gin.Context) {
 	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
 
@@ -57,6 +74,14 @@ func GetBookmark(c *gin.Context) {
 	c.JSON(http.StatusNotFound, gin.H{"message": "bookmark not found"})
 }
 
+// CreateBookmark godoc
+// @Summary     Create a bookmark
+// @Tags        bookmarks
+// @Accept      json
+// @Param       body  body      models.Bookmark  true  "Bookmark data"
+// @Success     201
+// @Failure     400  {object}  map[string]string
+// @Router      /bookmark [post]
 func CreateBookmark(c *gin.Context) {
 	var bookmark models.Bookmark
 	err := c.ShouldBindJSON(&bookmark)
@@ -73,6 +98,16 @@ func CreateBookmark(c *gin.Context) {
 	c.Status(http.StatusCreated)
 }
 
+// EditBookmark godoc
+// @Summary     Update a bookmark
+// @Tags        bookmarks
+// @Accept      json
+// @Param       id    path      int              true  "Bookmark ID"
+// @Param       body  body      models.Bookmark  true  "Bookmark data"
+// @Success     204
+// @Failure     400  {object}  map[string]string
+// @Failure     404  {object}  map[string]string
+// @Router      /bookmark/{id} [put]
 func EditBookmark(c *gin.Context) {
 	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
 
@@ -105,6 +140,13 @@ func EditBookmark(c *gin.Context) {
 	c.JSON(http.StatusNotFound, gin.H{"message": "bookmark not found"})
 }
 
+// DeleteBookmark godoc
+// @Summary     Delete a bookmark
+// @Tags        bookmarks
+// @Param       id   path      int  true  "Bookmark ID"
+// @Success     204
+// @Failure     400  {object}  map[string]string
+// @Router      /bookmark/{id} [delete]
 func DeleteBookmark(c *gin.Context) {
 	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
 
@@ -117,6 +159,11 @@ func DeleteBookmark(c *gin.Context) {
 	c.Status(http.StatusNoContent)
 }
 
+// DeleteBookmarks godoc
+// @Summary     Delete all bookmarks
+// @Tags        bookmarks
+// @Success     204
+// @Router      /bookmark [delete]
 func DeleteBookmarks(c *gin.Context) {
 	bookmarks = nil
 	c.Status(http.StatusNoContent)

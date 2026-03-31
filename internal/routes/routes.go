@@ -5,9 +5,13 @@ import (
 
 	"github.com/diaszakir/bookmark/internal/handlers"
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 func Routes(r *gin.Engine) {
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+
 	r.GET("/health", checkAPI)
 
 	r.GET("/bookmark", handlers.GetBookmarks)
