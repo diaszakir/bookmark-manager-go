@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"cmp"
 	"net/http"
 	"slices"
 	"strconv"
@@ -61,7 +62,7 @@ func CreateBookmark(c *gin.Context) {
 	err := c.ShouldBindJSON(&bookmark)
 
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"message": err})
+		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
 
@@ -73,7 +74,35 @@ func CreateBookmark(c *gin.Context) {
 }
 
 func EditBookmark(c *gin.Context) {
+	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
 
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"message": "Could not parse bookmark id"})
+		return
+	}
+
+	var editBookmark models.Bookmark
+	err = c.ShouldBindJSON(&editBookmark)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+		return
+	}
+
+	editBookmark.Id = id
+
+	for i, v := range bookmarks {
+		if v.Id == id {
+			bookmarks[i].Name = cmp.Or(editBookmark.Name, bookmarks[i].Name)
+			bookmarks[i].URL = cmp.Or(editBookmark.URL, bookmarks[i].URL)
+			bookmarks[i].Tag = cmp.Or(editBookmark.Tag, bookmarks[i].Tag)
+
+			c.Status(http.StatusNoContent)
+			return
+		}
+	}
+
+	c.JSON(http.StatusNotFound, gin.H{"message": "bookmark not found"})
 }
 
 func DeleteBookmark(c *gin.Context) {
