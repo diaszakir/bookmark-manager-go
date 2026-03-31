@@ -11,7 +11,7 @@ import (
 )
 
 var bookmarks []models.Bookmark
-var id int64
+var id int64 = 0
 
 func GetBookmarks(c *gin.Context) {
 	name := c.Query("name")
@@ -106,9 +106,18 @@ func EditBookmark(c *gin.Context) {
 }
 
 func DeleteBookmark(c *gin.Context) {
+	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
 
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"message": "Could not parse bookmark id"})
+		return
+	}
+
+	bookmarks = slices.Delete(bookmarks, int(id-1), int(id))
+	c.Status(http.StatusNoContent)
 }
 
 func DeleteBookmarks(c *gin.Context) {
-
+	bookmarks = nil
+	c.Status(http.StatusNoContent)
 }
