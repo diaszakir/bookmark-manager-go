@@ -3,20 +3,22 @@ package routes
 import (
 	"net/http"
 
+	"github.com/diaszakir/bookmark/internal/handlers"
 	"github.com/gin-gonic/gin"
 )
 
 func Routes(r *gin.Engine) {
 	r.GET("/health", checkAPI)
 
-	r.GET("/bookmark")
-	r.GET("/bookmark/:id")
+	r.GET("/bookmark", handlers.GetBookmarks)
+	r.GET("/bookmark/:id", handlers.GetBookmark)
 
-	r.POST("/bookmark")
+	r.POST("/bookmark", handlers.CreateBookmark)
 
-	r.PUT("/bookmark/:id")
+	r.PUT("/bookmark/:id", handlers.EditBookmark)
 
-	r.DELETE("/bookmark/:id")
+	r.DELETE("/bookmark/:id", handlers.DeleteBookmark)
+	r.DELETE("/bookmark", handlers.DeleteBookmarks)
 }
 
 func checkAPI(c *gin.Context) {
